@@ -1,0 +1,27 @@
+name: Auto Scrape CircleFTP
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install axios cheerio
+      - name: Run scraper script
+        run: node scraper.js
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add database.json
+          git diff --staged --quiet || git commit -m "Auto-update database.json via scraper"
+          git push
