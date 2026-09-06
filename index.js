@@ -28,10 +28,10 @@ builder.defineStreamHandler(async ({ type, id }) => {
             url: match.url
           }
         ]
-      };
+      }
     }
   }
-  return { streams: [] });
+ return { streams: [] };
 });
 
 const router = getRouter(builder.getInterface());
