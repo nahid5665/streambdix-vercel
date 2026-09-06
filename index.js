@@ -1,4 +1,4 @@
-const { addonBuilder } = require('stremio-addon-sdk');
+const { addonBuilder, getRouter } = require('stremio-addon-sdk');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
@@ -54,4 +54,11 @@ builder.defineStreamHandler(async ({ type, id }) => {
     return { streams: [] };
 });
 
-module.exports = builder.getInterface();
+const router = getRouter(builder.getInterface());
+
+module.exports = function (req, res) {
+    router(req, res, function () {
+        res.statusCode = 404;
+        res.end();
+    });
+};
