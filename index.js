@@ -1,4 +1,4 @@
-const { addonBuilder, getRouter } = require('stremio-addon-sdk');
+const { addonBuilder } = require('stremio-addon-sdk');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
@@ -25,7 +25,7 @@ async function searchFTP(query) {
             const href = $(el).attr('href');
             if (href && href.toLowerCase().includes(query.toLowerCase())) {
                 matchUrl = ftpUrl + href;
-                return false; // break the loop on first match
+                return false;
             }
         });
         return matchUrl;
@@ -54,11 +54,4 @@ builder.defineStreamHandler(async ({ type, id }) => {
     return { streams: [] };
 });
 
-const router = getRouter(builder.getInterface());
-
-module.exports = function (req, res) {
-    router(req, res, function () {
-        res.statusCode = 404;
-        res.end();
-    });
-};
+module.exports = builder.getInterface();
