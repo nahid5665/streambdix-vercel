@@ -14,7 +14,6 @@ const manifest = {
 
 const builder = new addonBuilder(manifest);
 
-// Helper to search CircleFTP directories
 async function searchFTP(query) {
     try {
         const ftpUrl = `http://index.circleftp.net/FILE/English%20Movies/`;
@@ -22,10 +21,11 @@ async function searchFTP(query) {
         const $ = cheerio.load(response.data);
         
         let matchUrl = null;
-        $('a').forEach((i, el) => {
+        $('a').each((i, el) => {
             const href = $(el).attr('href');
             if (href && href.toLowerCase().includes(query.toLowerCase())) {
                 matchUrl = ftpUrl + href;
+                return false; // break the loop on first match
             }
         });
         return matchUrl;
@@ -37,9 +37,7 @@ async function searchFTP(query) {
 
 builder.defineStreamHandler(async ({ type, id }) => {
     if (type === 'movie') {
-        // In a production addon, map 'id' (tt...) to a movie title using a free metadata API or Cinemeta
-        // For now, let's use a fallback search or direct mapping example
-        const sampleQuery = "Pianist"; // Replace or map dynamically via Cinemeta API
+        const sampleQuery = "Pianist";
         const streamUrl = await searchFTP(sampleQuery);
 
         if (streamUrl) {
